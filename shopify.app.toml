@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "a7ba03f022c5816c01ed93ff549a7cec"
-application_url = "https://example.com/"
+application_url = "https://4bb3cda6cd75.ngrok.app"
 embedded = true
 name = "tuanpa-application"
 handle = "tuanpa-application"
@@ -22,7 +22,16 @@ api_version = "2024-10"
 scopes = "read_customers,read_draft_orders,read_orders,read_products,write_draft_orders,write_orders,write_products"
 
 [auth]
-redirect_urls = [ "https://example.com/api/auth" ]
+redirect_urls = [
+  "https://4bb3cda6cd75.ngrok.app/auth/callback",
+  "https://4bb3cda6cd75.ngrok.app/auth/shopify/callback",
+  "https://4bb3cda6cd75.ngrok.app/api/auth/callback"
+]
 
 [pos]
 embedded = false
+
+[build]
+include_config_on_deploy = true
+dev_store_url = "tuanpa20-store.myshopify.com"
+automatically_update_urls_on_dev = true

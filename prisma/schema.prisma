@@ -30,3 +30,16 @@ model Session {
   collaborator  Boolean?  @default(false)
   emailVerified Boolean?  @default(false)
 }
+
+model Order {
+  id               Int      @id @default(autoincrement())
+  orderId          String   @unique
+  orderNumber      Int
+  totalPrice       String?
+  paymentGateway   String
+  customerEmail    String?
+  customerFullName String?
+  customerAddress  String?
+  tags             String?
+  createdAt        DateTime @default(now())
+}
