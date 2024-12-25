@@ -3,11 +3,11 @@ import type { Prisma } from '@prisma/client';
 export const createOrUpdate = async (orderData: Prisma.OrderWhereInput) => {
   const { orderId, ...data } = orderData;
   try {
-    const existingUser = await prisma.order.findFirst({
+    const existingOrder = await prisma.order.findFirst({
       where: { orderId },
     })
 
-    if (existingUser) {
+    if (existingOrder) {
       return await prisma.order.update({ where: { orderId: orderId as string }, data: data as Prisma.OrderUpdateInput })
     } else {
       return await prisma.order.create({ data: orderData as Prisma.OrderCreateInput })

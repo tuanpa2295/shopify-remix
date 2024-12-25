@@ -80,8 +80,8 @@ const OrderTableRow = ({ order }: { order: Order }) => {
         {new Date(order.createdAt).toDateString()}
       </IndexTable.Cell>
       <IndexTable.Cell>
-        {order.tags}
-        {/* <List type="bullet">
+        {/* {order.tags} */}
+        <List type="bullet">
           {order.tags && order.tags?.split(',').length > 0 ? (
             order.tags.split(',').map((tag, index) => (
               <List.Item key={index}>{tag}</List.Item>
@@ -89,7 +89,7 @@ const OrderTableRow = ({ order }: { order: Order }) => {
           ) : (
               <></>
             )}
-        </List> */}
+        </List>
       </IndexTable.Cell>
       <IndexTable.Cell>
         <Link to={`/app/order/edit/${order.orderId}`}>Edit</Link>

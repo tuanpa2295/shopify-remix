@@ -21,6 +21,7 @@ api_version = "2024-10"
   topics = [
   "orders/create",
   "orders/edited",
+  "orders/updated",
   "products/create",
   "products/update",
   "products/delete"
