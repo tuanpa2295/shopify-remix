@@ -20,7 +20,7 @@ export const action = async ({
   request: any;
   params: any;
 }) => {
-  const { admin, session } = await authenticate.admin(request);
+  const { admin } = await authenticate.admin(request);
   const body = await request.formData();
   const adds = body.get("adds");
   const removes = body.get("removes");

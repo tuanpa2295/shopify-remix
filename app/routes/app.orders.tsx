@@ -4,6 +4,7 @@ import { authenticate } from "../shopify.server";
 import { Card, EmptyState, Layout, Page, IndexTable, List } from "@shopify/polaris";
 import type { Order } from "@prisma/client";
 import { getOrders } from "app/models/order";
+import { NonEmptyArray } from "@shopify/polaris/build/ts/src/types";
 
 export async function loader({ request, params }: { request: any, params: any }) {
   const { admin, session } = await authenticate.admin(request);
@@ -37,6 +38,22 @@ const EmptyQRCodeState = () => (
   </EmptyState>
 );
 
+export function formatOrderNumber(orderNumber: string) {
+  return `#${orderNumber}`;
+}
+
+
+
+export function formatPrice(price: number) {
+  const locale = "en-US";
+  const regionCurrency = "usd";
+
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: regionCurrency,
+  }).format(price);
+}
+
 const OrderTable = ({ orders }: { orders: Order[] }) => (
   <div style={{padding: '15px', height: '100%'}}>
     <IndexTable
@@ -61,6 +78,67 @@ const OrderTable = ({ orders }: { orders: Order[] }) => (
 
   </div>
 );
+
+type HeaderItem = { title: string };
+
+const header: NonEmptyArray<HeaderItem> = [
+  { title: "Order Id" },
+  { title: "Order Number" },
+  { title: "Total Price" },
+  { title: "Payment Gateway" },
+  { title: "Customer Email" },
+  { title: "Customer Full Name" },
+  { title: "Customer Address" },
+  { title: "Tags" },
+  { title: "Created At" },
+  { title: "Action" }
+] as NonEmptyArray<HeaderItem>;
+
+const exportCSV = (orders: Order[]) => {
+  const rows = orders
+    .map(
+      ({
+        orderId,
+        orderNumber,
+        totalPrice,
+        paymentGateway,
+        customerEmail,
+        customerFullName,
+        customerAddress,
+        tags,
+        createdAt,
+      }) =>
+        [
+          orderId,
+          orderNumber,
+          totalPrice,
+          paymentGateway,
+          customerEmail,
+          `"${customerFullName}"`,
+          `"${customerAddress}"`,
+          `"${tags}"`,
+          createdAt,
+        ].join(","),
+    )
+    .join("\n");
+  const headers = header.slice(0, -1).map((item: HeaderItem) => item.title).join(",")  + "\n";
+  const csvContent = headers + rows
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+  const link = document.createElement("a");
+  if (link.download !== undefined) {
+    const url = URL.createObjectURL(blob);
+
+    link.setAttribute("href", url);
+    link.setAttribute("download", "order-list.csv");
+    link.style.visibility = "hidden";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+};
 
 const OrderTableRow = ({ order }: { order: Order }) => {
   const orderUrl = `https://admin.shopify.com/store/tuanpa-application/orders/${order.orderId}`;
@@ -117,6 +195,13 @@ export default function Index() {
               </>
             )}
           </Card>
+        </Layout.Section>
+        <Layout.Section>
+          <ui-title-bar title="Orders List">
+            <button variant="primary" onClick={() => exportCSV(orders)}>
+              Export Order To CSV
+            </button>
+          </ui-title-bar>
         </Layout.Section>
       </Layout>
     </Page>
