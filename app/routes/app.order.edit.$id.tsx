@@ -279,6 +279,7 @@ export default function OrderForm() {
                 />
               </BlockStack>
             </Card>
+
             <Card>
               <BlockStack gap="500">
                 <Text as={"h2"} variant="headingLg">
@@ -294,6 +295,63 @@ export default function OrderForm() {
                 />
               </BlockStack>
             </Card>
+
+            <Card>
+              <BlockStack gap="500">
+                <Text as={"h2"} variant="headingLg">
+                  Customer Info
+                </Text>
+
+                <TextField
+                  id="customerFullName"
+                  label="Full Name"
+                  autoComplete="off"
+                  value={formState?.customerFullName || ''}
+                  disabled
+                />
+
+                <TextField
+                  id="customerAddress"
+                  label="Address"
+                  autoComplete="off"
+                  value={formState?.customerAddress || ''}
+                  disabled
+                />
+                <TextField
+                  id="customerEmail"
+                  label="Email"
+                  autoComplete="off"
+                  value={formState?.customerEmail || ''}
+                  disabled
+                />
+              </BlockStack>
+            </Card>
+
+            <Card>
+            <BlockStack gap="500">
+                <Text as={"h2"} variant="headingLg">
+                    Order Info
+                </Text>
+
+                <TextField
+                      id="paymentGateway"
+                      label="Payment Gateway"
+                      autoComplete="off"
+                      value={formState?.paymentGateway || ''}
+                      disabled
+                      />
+
+                <TextField
+                      id="totalPrice"
+                      label="Total Price"
+                      autoComplete="off"
+                      value={formState?.totalPrice || ''}
+                      disabled
+                      />
+
+              </BlockStack>
+            </Card>
+
             <Card>
               <BlockStack gap="500">
                 <Text as={"h2"} variant="headingLg">
