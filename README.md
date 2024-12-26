@@ -1,10 +1,23 @@
 # Shopify App Template - Remix
 
-This is a template for building a [Shopify app](https://shopify.dev/docs/apps/getting-started) using the [Remix](https://remix.run) framework.
+## Prisma Model
 
-Rather than cloning this repo, you can use your preferred package manager and the Shopify CLI with [these steps](https://shopify.dev/docs/apps/getting-started/create).
+The following Prisma model represents the structure of the `Order` entity:
 
-Visit the [`shopify.dev` documentation](https://shopify.dev/docs/api/shopify-app-remix) for more details on the Remix app package.
+```prisma
+model Order {
+  id               Int      @id @default(autoincrement())
+  orderId          String   @unique
+  orderNumber      Int
+  totalPrice       String?
+  paymentGateway   String
+  customerEmail    String?
+  customerFullName String?
+  customerAddress  String?
+  tags             String?
+  createdAt        DateTime @default(now())
+}
+```
 
 ## Quick start
 
@@ -226,7 +239,7 @@ pnpm run deploy
 
 ### My shop-specific webhook subscriptions aren't updated
 
-If you are registering webhooks in the `afterAuth` hook, using `shopify.registerWebhooks`, you may find that your subscriptions aren't being updated.  
+If you are registering webhooks in the `afterAuth` hook, using `shopify.registerWebhooks`, you may find that your subscriptions aren't being updated.
 
 Instead of using the `afterAuth` hook, the recommended approach is to declare app-specific webhooks in the `shopify.app.toml` file.  This approach is easier since Shopify will automatically update changes to webhook subscriptions every time you run `deploy` (e.g: `npm run deploy`).  Please read these guides to understand more:
 

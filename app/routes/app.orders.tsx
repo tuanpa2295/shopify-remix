@@ -178,7 +178,7 @@ export default function Index() {
   const { orders }: { orders: any[] } = useLoaderData();
   const { count } : { count: number } = useLoaderData();
   return (
-    <Page>
+    <Page fullWidth={true}>
       <Layout>
         <Layout.Section>
           <Card padding="0">
@@ -188,7 +188,7 @@ export default function Index() {
               <>
                 <div style={
                   {padding: '15px'}
-                }> Showing {orders.length} out of total { count } { count > 1 ? 'orders' : 'order' } created</div>
+                }> Showing {orders.length} out of total { count } { count > 1 ? 'orders' : 'order' } created in Shopify</div>
                 <OrderTable orders={orders} />
               </>
             )}

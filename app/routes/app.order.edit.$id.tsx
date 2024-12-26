@@ -21,6 +21,7 @@ import {
   EmptySearchResult,
   InlineStack,
   Button,
+  Toast,
 } from "@shopify/polaris";
 
 import db from "../db.server";
@@ -104,6 +105,8 @@ export default function OrderForm() {
   const [tagField, setTagField] = useState<string[]>(tagList);
   const [newTag, setNewTag] = useState<string>("");
   const [suggestion, setSuggestion] = useState('');
+  const [toastActive, setToastActive] = useState(false);
+  const [toastMessage, setToastMessage] = useState("false");
 
   const isDirty = JSON.stringify(formState) !== JSON.stringify(cleanFormState);
 
@@ -111,6 +114,10 @@ export default function OrderForm() {
   const isSaving = nav.state === "submitting";
 
   const navigate = useNavigate();
+  const toggleActive = useCallback(
+    () => setToastActive((active) => !active),
+    [],
+  );
 
   const submit = useSubmit();
 
@@ -126,6 +133,7 @@ export default function OrderForm() {
     },
     [newTag, tagField],
   );
+
   const updateSelection = useCallback(
     (selected: string) => {
       const nextSelectedTags = new Set([...tagField]);
@@ -379,6 +387,10 @@ export default function OrderForm() {
                 </Combobox>
               </BlockStack>
             </Card>
+
+            {toastActive ? (
+              <Toast content={toastMessage} onDismiss={toggleActive} />
+            ) : null}
           </BlockStack>
           <PageActions
             primaryAction={{
@@ -387,7 +399,10 @@ export default function OrderForm() {
               disabled: !isDirty || isSaving,
               onAction: handleSave,
             }}
-            secondaryActions={<Button onClick={() => navigate("/app/orders")}>Close</Button>}
+            secondaryActions={<Button onClick={() => {
+              setToastMessage("Order updated!");
+              navigate("/app/orders")
+            }}>Close</Button>}
           />
         </Layout.Section>
       </Layout>
