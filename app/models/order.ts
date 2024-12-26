@@ -21,7 +21,7 @@ export async function deleteOrder(orderId: string) {
   const existOrder = await prisma.order.findFirst({ where: { orderId } });
 
   if(existOrder) {
-    await prisma.order.delete({ where: { id: existOrder.id } });
+    await prisma.order.delete({ where: { orderId: existOrder.orderId } });
   } else {
     console.log(`Order Id: ${orderId} Not Found!`)
   }
@@ -39,7 +39,7 @@ export async function getOrder(orderId: string) {
 export async function getOrders() {
   const orders = await prisma.order.findMany({
     where: {},
-    orderBy: { id: "desc" },
+    orderBy: { orderId: "desc" },
   });
 
   return orders;

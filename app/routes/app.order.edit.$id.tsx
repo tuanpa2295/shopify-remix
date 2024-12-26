@@ -26,8 +26,8 @@ import {
 import db from "../db.server";
 import type { Order } from "@prisma/client";
 import type { LoaderFunctionArgs} from "@remix-run/node";
-import { getOrder } from "app/models/order";
-// import { authenticate } from "app/shopify.server";
+import { createOrUpdate, getOrder } from "app/models/order";
+import { authenticate } from "app/shopify.server";
 
 export async function loader({ request, params }: LoaderFunctionArgs): Promise<any> {
   // const { admin, session } = await authenticate.admin(request);
@@ -67,65 +67,37 @@ export async function loader({ request, params }: LoaderFunctionArgs): Promise<a
   return json({ order, params });
 }
 
-// export async function action({ request, params }: LoaderFunctionArgs) {
-//   const { admin, session } = await authenticate.admin(request);
-//   console.log(`ACTION request: ${JSON.stringify(request)} params: ${JSON.stringify(request)} `)
-//   const response = await admin.graphql(`
-//     {
-//       order(id: "gid://shopify/Order/${params.id}") {
-//         id
-//         tags
-//         name
-//         totalPriceSet {
-//           presentmentMoney {
-//             amount
-//           }
-//         }
-//         lineItems(first: 10) {
-//           nodes {
-//             id
-//             name
-//           }
-//         }
-//         customer {
-//           id
-//           displayName
-//           email
-//         }
-//       }
-//     }`);
+export async function action({ request, params }: LoaderFunctionArgs) {
+  const { admin, session } = await authenticate.admin(request);
 
-//   const {
-//     data: { order },
-//   } = await response.json();
+  // const orderFromStore = new admin.rest.resources.Order({session: session});
 
+  const data: { orderId: string, tags: string } = {
+    ...Object.fromEntries(await request.formData()) as { orderId: string, tags: string }
+  };
 
-//   const orderFromStore = order;
+  const mutation = `
+    mutation {
+      tagsAdd(id: "gid://shopify/Order/${params.id}", tags: [${data.tags.split(",").map((tag: string) => `"${tag}"`)}]) {
+        userErrors {
+          field
+          message
+        }
+      }
+    }`;
 
-//   console.log("Response data:", JSON.stringify(orderFromStore));
+    const response = await admin.graphql(mutation);
+    const updateResponse = await response.json();
+    const databaseUpdate = await createOrUpdate(data);
 
-//   const data: any = {
-//     ...Object.fromEntries(await request.formData())
-//   };
-//   orderFromStore.id = parseInt(data.orderId);
-//   orderFromStore.tags = data.tags;
-//   await orderFromStore.save({
-//     update: true,
-//   });
+    console.log(`updateResponse formData: ${JSON.stringify(updateResponse)} databaseUpdate: ${JSON.stringify(databaseUpdate)}`);
 
-//   const updateResponse = await db.order.update({ where: { id: Number(params.id) }, data });
-
-//   console.log("Response:", updateResponse)
-
-//   return redirect(`/app/orders`);
-// }
+  return redirect(`/app/orders`);
+}
 
 export default function OrderForm() {
   const orderData: any = useLoaderData();
   const orderRes = orderData.order;
-
-  console.error('AAAAAAAAAAAAAAAAAAAAAAa', orderRes);
-
   const tagList = orderRes.tags ? orderRes.tags.split(",") : []
   const [formState, setFormState] = useState<Order>(orderRes);
   const [cleanFormState, setCleanFormState] = useState(orderRes);
@@ -286,7 +258,7 @@ export default function OrderForm() {
     <Page>
       <ui-title-bar title="Edit Tag Order">
         <button variant="breadcrumb" onClick={() => navigate("/app/orders")}>
-          Orders
+          Orders List
         </button>
       </ui-title-bar>
       <Layout>
