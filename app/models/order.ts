@@ -17,9 +17,18 @@ export const createOrUpdate = async (orderData: Prisma.OrderWhereInput) => {
   }
 }
 
-export async function getOrder(id: number) {
-  const orderRecord = await prisma.order.findFirst({ where: { id } });
+export async function deleteOrder(orderId: string) {
+  const existOrder = await prisma.order.findFirst({ where: { orderId } });
 
+  if(existOrder) {
+    await prisma.order.delete({ where: { id: existOrder.id } });
+  } else {
+    console.log(`Order Id: ${orderId} Not Found!`)
+  }
+}
+
+export async function getOrder(orderId: string) {
+  const orderRecord = await prisma.order.findFirst({ where: { orderId: String(orderId) } });
   if (!orderRecord) {
     return null;
   }
@@ -36,12 +45,4 @@ export async function getOrders() {
   return orders;
 }
 
-export async function deleteOrder(orderId: string) {
-  const existOrder = await prisma.order.findFirst({ where: { orderId } });
 
-  if(existOrder) {
-    await prisma.order.delete({ where: { id: existOrder.id } });
-  } else {
-    console.log("Not Found Order Id: ", orderId)
-  }
-}

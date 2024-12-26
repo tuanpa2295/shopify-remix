@@ -79,22 +79,20 @@ const OrderTable = ({ orders }: { orders: Order[] }) => (
   </div>
 );
 
-type HeaderItem = { title: string };
-
-const header: NonEmptyArray<HeaderItem> = [
-  { title: "Order Id" },
-  { title: "Order Number" },
-  { title: "Total Price" },
-  { title: "Payment Gateway" },
-  { title: "Customer Email" },
-  { title: "Customer Full Name" },
-  { title: "Customer Address" },
-  { title: "Tags" },
-  { title: "Created At" },
-  { title: "Action" }
-] as NonEmptyArray<HeaderItem>;
-
 const exportCSV = (orders: Order[]) => {
+  type HeaderItem = { title: string };
+  const header: NonEmptyArray<HeaderItem> = [
+    { title: "Order ID" },
+    { title: "Order Number" },
+    { title: "Total Price" },
+    { title: "Payment Gateway" },
+    { title: "Customer Email" },
+    { title: "Customer Full Name" },
+    { title: "Customer Address" },
+    { title: "Tags" },
+    { title: "Created At" },
+  ] as NonEmptyArray<HeaderItem>;
+
   const rows = orders
     .map(
       ({
@@ -199,7 +197,7 @@ export default function Index() {
         <Layout.Section>
           <ui-title-bar title="Orders List">
             <button variant="primary" onClick={() => exportCSV(orders)}>
-              Export Order To CSV
+              Export Orders To CSV
             </button>
           </ui-title-bar>
         </Layout.Section>
