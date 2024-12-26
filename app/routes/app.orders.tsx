@@ -1,10 +1,11 @@
 import { json } from "@remix-run/node";
 import { useLoaderData, Link } from "@remix-run/react";
 import { authenticate } from "../shopify.server";
-import { Card, EmptyState, Layout, Page, IndexTable, List } from "@shopify/polaris";
+import { Card, EmptyState, Layout, Page, IndexTable, List, Badge } from "@shopify/polaris";
 import type { Order } from "@prisma/client";
 import { getOrders } from "app/models/order";
-import { NonEmptyArray } from "@shopify/polaris/build/ts/src/types";
+import type { NonEmptyArray } from "@shopify/polaris/build/ts/src/types";
+import { ToneValue } from "@shopify/polaris/build/ts/src/components/Badge/types";
 
 export async function loader({ request, params }: { request: any, params: any }) {
   const { admin, session } = await authenticate.admin(request);
@@ -67,7 +68,7 @@ const OrderTable = ({ orders }: { orders: Order[] }) => (
         { title: "Total Price" },
         { title: "Date created" },
         { title: "Tags" },
-        { title: "" },
+        { title: "Action" },
       ]}
       selectable={false}
     >
@@ -156,16 +157,13 @@ const OrderTableRow = ({ order }: { order: Order }) => {
         {new Date(order.createdAt).toDateString()}
       </IndexTable.Cell>
       <IndexTable.Cell>
-        {/* {order.tags} */}
-        <List type="bullet">
-          {order.tags && order.tags?.split(',').length > 0 ? (
+        {order.tags && order.tags?.split(',').length > 0 ? (
             order.tags.split(',').map((tag, index) => (
-              <List.Item key={index}>{tag}</List.Item>
+              <Badge tone="success" key={index} size="large">{tag}</Badge>
             ))
           ) : (
               <></>
-            )}
-        </List>
+        )}
       </IndexTable.Cell>
       <IndexTable.Cell>
         <Link to={`/app/order/edit/${order.orderId}`}>Edit</Link>
